@@ -1,0 +1,4 @@
+#!/bin/bash
+export PKG_CONFIG_PATH=$HOME/local/efl/lib/pkgconfig
+export LD_LIBRARY_PATH=$HOME/local/efl/lib
+eval "$@"

@@ -12,8 +12,7 @@ int
 main(void)
 {
    Ecore_Evas *ee;
-   Evas_Object *bg, *cursor, *obj;
-   int layer, x, y;
+   Evas_Object *bg;
 
    ecore_evas_init();
 
@@ -32,14 +31,7 @@ main(void)
 
    evas_object_event_callback_add(bg, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, NULL);
 
-   cursor = evas_object_rectangle_add(ecore_evas_get(ee));
-   evas_object_color_set(cursor, 0, 255, 0, 255);
-   evas_object_resize(cursor, 5, 10);
-   ecore_evas_object_cursor_set(ee, cursor, 0, 1, 1);
-
-   ecore_evas_cursor_get(ee, &obj, &layer, &x, &y);
-   if (obj == cursor && layer == 0 && x == 1 && y == 1)
-     printf("Set cursor worked!\n");
+   ecore_evas_cursor_set(ee, "cursor.png", 0, 10, 10);
 
    ecore_main_loop_begin();
 

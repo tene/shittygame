@@ -3,8 +3,8 @@ OBJS := game.o
 PROGS := game
 ECORE_CFLAGS := $(shell pkg-config --cflags ecore)
 ECORE_LIBS   := $(shell pkg-config --libs ecore)
-ECORE_EVAS_CFLAGS := $(shell pkg-config --cflags ecore-evas)
-ECORE_EVAS_LIBS   := $(shell pkg-config --libs ecore-evas)
+ECORE_EVAS_CFLAGS := $(shell pkg-config --cflags ecore-evas evas)
+ECORE_EVAS_LIBS   := $(shell pkg-config --libs ecore-evas evas)
 
 all: $(PROGS)
 
