@@ -43,7 +43,6 @@ static void rotate_vec(double *x, double *y, double degrees) {
 static void _on_keydown(void *data, Evas *e, Evas_Object *o, void *event_info) {
     Evas_Event_Key_Down *key = event_info;
     Ship *ship = data;
-    printf("move: %c\n", key->keyname[0]);
     double x = accel;
     double y = 0;
     double angle = 0;;
@@ -63,7 +62,6 @@ static void _on_keydown(void *data, Evas *e, Evas_Object *o, void *event_info) {
         default:
             break;
     }
-    printf("thrust=%f\nship=%f\n", angle, ship->angle);
     rotate_vec(&x, &y, angle);
     rotate_vec(&x, &y, -1 * ship->angle);
     ship->dx += x;
