@@ -12,7 +12,7 @@ game.o: game.c Makefile
 	gcc -c $(CFLAGS) $(ECORE_CFLAGS) $(ECORE_EVAS_CFLAGS) -fPIC -o game.o game.c
 
 game: game.o
-	gcc $(ECORE_LIBS) $(ECORE_EVAS_LIBS) -o game game.o
+	gcc $(ECORE_LIBS) $(ECORE_EVAS_LIBS) -lm -o game game.o
 
 clean:
 	rm -f $(PROGS) $(OBJS)
