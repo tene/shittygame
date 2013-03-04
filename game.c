@@ -32,26 +32,42 @@ static void _mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info)
     cursor.y = move->cur.output.y;
 }
 
+static void rotate_vec(double *x, double *y, double degrees) {
+    double rad = degrees*M_PI/180;
+    double nx = *y * sin(rad) + *x * cos(rad);
+    double ny = *y * cos(rad) - *x * sin(rad);
+    *x = nx;
+    *y = ny;
+}
+
 static void _on_keydown(void *data, Evas *e, Evas_Object *o, void *event_info) {
     Evas_Event_Key_Down *key = event_info;
     Ship *ship = data;
     printf("move: %c\n", key->keyname[0]);
+    double x = accel;
+    double y = 0;
+    double angle = 0;;
     switch (key->keyname[0]) {
         case 'w':
-            ship->dy -= accel;
+            angle = 0;
             break;
         case 'a':
-            ship->dx -= accel;
+            angle = 90;
             break;
         case 's':
-            ship->dy += accel;
+            angle = 180;
             break;
         case 'd':
-            ship->dx += accel;
+            angle = -90;
             break;
         default:
             break;
     }
+    printf("thrust=%f\nship=%f\n", angle, ship->angle);
+    rotate_vec(&x, &y, angle);
+    rotate_vec(&x, &y, -1 * ship->angle);
+    ship->dx += x;
+    ship->dy += y;
 }
 
 static Eina_Bool _move_ship(void *data) {
@@ -60,13 +76,13 @@ static Eina_Bool _move_ship(void *data) {
     ship->y += ship->dy * frametime;
     int x = (int)ship->x;
     int y = (int)ship->y;
-    //printf("moving ship to: %d, %d\n", x, y);
+
     evas_object_move(ship->obj, x - (ship->w/2), y - (ship->h/2));
-    ship->angle = 90 + (atan2(cursor.y - y, cursor.x - x) * 180/M_PI);
+    ship->angle = (atan2(cursor.y - y, cursor.x - x) * 180/M_PI);
 
     int img_w, img_h;
     evas_object_image_size_get(ship->obj, &img_w, &img_h);
- 
+
     Evas_Map *map = evas_map_new(4);
     evas_map_util_points_populate_from_object(map, ship->obj);
     evas_map_point_image_uv_set(map, 0, 0, 0);
@@ -74,7 +90,7 @@ static Eina_Bool _move_ship(void *data) {
     evas_map_point_image_uv_set(map, 2, img_w, img_h);
     evas_map_point_image_uv_set(map, 3, 0, img_h);
     evas_map_smooth_set(map, EINA_TRUE);
-    evas_map_util_rotate(map, ship->angle, x, y);
+    evas_map_util_rotate(map, 90 + ship->angle, x, y);
     evas_object_map_set(ship->obj, map);
     evas_object_map_enable_set(ship->obj, EINA_TRUE);
     evas_map_free(map);
@@ -89,13 +105,13 @@ main(void)
 
    ecore_evas_init();
 
-   ee = ecore_evas_new(NULL, 0, 0, 200, 200, NULL);
+   ee = ecore_evas_new(NULL, 0, 0, 800, 600, NULL);
    ecore_evas_title_set(ee, "Ecore Evas Object Example");
    ecore_evas_show(ee);
 
    bg = evas_object_rectangle_add(ecore_evas_get(ee));
    evas_object_color_set(bg, 0, 0, 255, 255);
-   evas_object_resize(bg, 200, 200);
+   evas_object_resize(bg, 800, 600);
    evas_object_show(bg);
    ecore_evas_object_associate(ee, bg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
    evas_object_focus_set(bg, EINA_TRUE);
