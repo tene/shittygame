@@ -1,0 +1,26 @@
+images {
+    image: "ship.png" COMP;
+}
+
+collections {
+    group {
+        name: "main";
+        min: 50 70;
+        parts {
+            part {
+                name: "body";
+                type: IMAGE;
+                mouse_events: 0;
+                repeat_events: 1;
+                description {
+                    fixed: 1 1;
+                    min: 50 70;
+                    max: 50 70;
+                    image {
+                        normal: "ship.png";
+                    }
+                }
+            }
+        }
+    }
+}

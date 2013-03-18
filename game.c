@@ -1,4 +1,5 @@
 #define _GNU_SOURCE
+#include <Edje.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <stdio.h>
@@ -10,14 +11,16 @@ typedef struct ship {
     Evas_Object *obj;
 } Ship;
 
-static Ship _new_ship(Evas *evas, char *img, float x, float y, int w, int h) {
-   Ship ship = {x, y, 0, 0, 0, w, h, evas_object_image_filled_add(evas)};
-   evas_object_image_file_set(ship.obj, img, NULL);
-   evas_object_resize(ship.obj, w, h);
-   evas_object_move(ship.obj, x - (w/2), y - (h/2));
-   evas_object_show(ship.obj);
-
-   return ship;
+static Ship _new_ship(Evas *evas, char *file, float x, float y) {
+    Evas_Object *edje = edje_object_add(evas);
+    edje_object_file_set(edje, file, "main");
+    int w, h;
+    edje_object_size_min_get(edje, &w, &h);
+    evas_object_resize(edje, w, h);
+    evas_object_move(edje, x - (w/2), y - (h/2));
+    evas_object_show(edje);
+    Ship ship = {x, y, 0, 0, 0, w, h, edje};
+    return ship;
 }
 
 static double accel = 5;
@@ -78,15 +81,8 @@ static Eina_Bool _move_ship(void *data) {
     evas_object_move(ship->obj, x - (ship->w/2), y - (ship->h/2));
     ship->angle = (atan2(cursor.y - y, cursor.x - x) * 180/M_PI);
 
-    int img_w, img_h;
-    evas_object_image_size_get(ship->obj, &img_w, &img_h);
-
     Evas_Map *map = evas_map_new(4);
     evas_map_util_points_populate_from_object(map, ship->obj);
-    evas_map_point_image_uv_set(map, 0, 0, 0);
-    evas_map_point_image_uv_set(map, 1, img_w, 0);
-    evas_map_point_image_uv_set(map, 2, img_w, img_h);
-    evas_map_point_image_uv_set(map, 3, 0, img_h);
     evas_map_smooth_set(map, EINA_TRUE);
     evas_map_util_rotate(map, 90 + ship->angle, x, y);
     evas_object_map_set(ship->obj, map);
@@ -104,6 +100,7 @@ main(void)
    Evas_Object *blocks[blocks_count];
 
    ecore_evas_init();
+   edje_init();
 
    ee = ecore_evas_new(NULL, 0, 0, 800, 600, NULL);
    ecore_evas_title_set(ee, "Ecore Evas Object Example");
@@ -127,7 +124,7 @@ main(void)
 
    ecore_evas_cursor_set(ee, "cursor.png", 0, 10, 10);
 
-   Ship ship = _new_ship(ecore_evas_get(ee), "ship.png", 90, 90, 50, 70);
+   Ship ship = _new_ship(ecore_evas_get(ee), "ship.edj", 90, 90);
 
    ecore_animator_frametime_set(frametime);
    ecore_animator_add(_move_ship, &ship);
