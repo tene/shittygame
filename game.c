@@ -100,6 +100,8 @@ main(void)
 {
    Ecore_Evas *ee;
    Evas_Object *bg;
+   size_t blocks_count = 10;
+   Evas_Object *blocks[blocks_count];
 
    ecore_evas_init();
 
@@ -113,6 +115,14 @@ main(void)
    evas_object_show(bg);
    ecore_evas_object_associate(ee, bg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
    evas_object_focus_set(bg, EINA_TRUE);
+
+   for (size_t i = 0; i < blocks_count; i++) {
+       blocks[i] = evas_object_rectangle_add(ecore_evas_get(ee));
+       evas_object_color_set(blocks[i], i*255/blocks_count, i*255/blocks_count, i*255/blocks_count, 255);
+       evas_object_resize(blocks[i], 10, 10);
+       evas_object_show(blocks[i]);
+       evas_object_move(blocks[i], 100 + 30*i, 100+30*i);
+   }
 
 
    ecore_evas_cursor_set(ee, "cursor.png", 0, 10, 10);
